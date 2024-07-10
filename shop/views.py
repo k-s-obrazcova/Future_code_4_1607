@@ -4,7 +4,6 @@ from .forms import ProductFilterForm, SupplierForm
 from .models import *
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 
-from .utils import CalculateMoney
 
 
 # Create your views here.
@@ -69,6 +68,7 @@ class ListSupplier(ListView):
     model = Supplier
     template_name = 'shop/supplier/supplier_list.html'
     allow_empty = True
+    paginate_by = 1
 
 class CreateSupplier(CreateView):
     model = Supplier
@@ -95,17 +95,3 @@ class DeleteSupplier(DeleteView):
     template_name = 'shop/supplier/supplier_delete.html'
     success_url = reverse_lazy('supplier_list')
 
-class OrderDetail(DetailView, CalculateMoney):
-    model = Order
-
-    template_name = 'shop/order.html'
-
-    def get_context_data(self, *, object_list=None, **kwargs):  # Переопределение метода для добавления доп. данных
-        context = super().get_context_data(**kwargs)
-
-        order = context.get('object')
-
-        list_price = [pos_order.sum_pos_order() for pos_order in order.pos_order_set.all()]
-        # Обращаемся к методу из CalculateMoney
-        context['sum_price'] = self.sum_price(prices=list_price)
-        return context
