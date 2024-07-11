@@ -10,3 +10,6 @@ class CalculateMoney:
         if discount:
             result = round(result * (1 - (discount / 100)), 2)
         return result
+
+def sum_price_count(price: [int, float], count: [int, float], discount: int = None):
+    return CalculateMoney().sum_price_count(price=price, count=count, discount=discount)
