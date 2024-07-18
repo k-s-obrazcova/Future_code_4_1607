@@ -43,3 +43,29 @@ def basket_buy(request):
     basket = Basket(request)
     if basket.__len__() <= 0:
         return redirect('list_product_filter')
+    form = OrderForm(request.POST)
+    if form.is_valid():
+        order = Order.objects.create(buyer_firstname=form.cleaned_data['buyer_firstname'],
+                                     buyer_name=form.cleaned_data['buyer_name'],
+                                     buyer_surname=form.cleaned_data['buyer_surname'],
+                                     comment=form.cleaned_data['comment'],
+                                     delivery_address=form.cleaned_data['delivery_address'],
+                                     delivery_type=form.cleaned_data['delivery_type']
+                                     )
+        order.price = basket.get_total_price()
+        for item in basket:
+            pos_order = Pos_order.objects.create(
+                product=item['product'],
+                count=item['count'],
+                order=order
+            )
+        basket.clear()
+    return redirect('basket_detail')
+
+
+@login_required
+def open_order(request):
+    context = {
+        'form_order': OrderForm
+    }
+    return render(request, 'order/order_form.html', context)

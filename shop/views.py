@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 
+from basket.forms import BasketAddProductForm
 from .forms import ProductFilterForm, SupplierForm
 from .models import *
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
@@ -41,7 +42,8 @@ def list_product_with_filter(request):
 def get_one_product(request, id):
     product = get_object_or_404(Product, pk=id)
     context = {
-        'product': product
+        'product': product,
+        'form_basket': BasketAddProductForm
     }
     return render(request, 'shop/product/one_product_table.html', context)
 
