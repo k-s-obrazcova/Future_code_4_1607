@@ -26,7 +26,7 @@
                 <tr>
                     <td>
                         {% if product.photo %}
-                            <img src="{{ product.photo.url }}" alt="...">
+                            <img src="{{ product.photo.url }}" style="max-height: 100px; max-width: 100px; object-fit: contain; border-radius: 20px" alt="...">
                         {% else %}
                             <img src="{% static 'shop/image/no_photo.jpg' %}" alt="...">
                         {% endif %}

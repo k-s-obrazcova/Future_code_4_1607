@@ -5,7 +5,14 @@ from .forms import ProductFilterForm, SupplierForm
 from .models import *
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 
+from .serializer import OrderSerializer, ProductSerializer
 from .utils import CalculateMoney
+
+from django.http import JsonResponse
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from rest_framework import viewsets
 
 
 # Create your views here.
@@ -16,6 +23,7 @@ def list_product(request):
         'list_product': product_list
     }
     return render(request, 'shop/product/all_product.html', context)
+
 
 def list_product_with_filter(request):
     product_list = Product.objects.all()
@@ -53,7 +61,7 @@ def get_one_filter_product(request):
     context = {
         'list_product': product_list
     }
-    return render(request, 'shop/product/all_product.html', context )
+    return render(request, 'shop/product/all_product.html', context)
 
 
 def get_more_filter_product(request):
@@ -73,6 +81,7 @@ class ListSupplier(ListView):
     allow_empty = True
     paginate_by = 1
 
+
 class CreateSupplier(CreateView):
     model = Supplier
     extra_context = {
@@ -81,9 +90,11 @@ class CreateSupplier(CreateView):
     template_name = 'shop/supplier/supplier_form.html'
     form_class = SupplierForm
 
+
 class DetailSupplier(DetailView):
     model = Supplier
     template_name = 'shop/supplier/supplier_detail.html'
+
 
 class UpdateSupplier(UpdateView):
     model = Supplier
@@ -93,18 +104,60 @@ class UpdateSupplier(UpdateView):
     template_name = 'shop/supplier/supplier_form.html'
     form_class = SupplierForm
 
+
 class DeleteSupplier(DeleteView):
     model = Supplier
     template_name = 'shop/supplier/supplier_delete.html'
     success_url = reverse_lazy('supplier_list')
 
+
 class OrderDetail(DetailView, CalculateMoney):
     model = Order
     template_name = 'shop/order.html'
 
-    def get_context_data(self,*, object_list=None, **kwargs):
+    def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         order = context.get('object')
         list_prices = [pos_order.sum_pos_order() for pos_order in order.pos_order_set.all()]
         context['sum_price'] = self.sum_price(prices=list_prices)
         return context
+
+
+@api_view(['GET', 'POST'])
+def order_api_list(request, format=None):
+    if request.method == 'GET':
+        order_list = Order.objects.all()
+        serializer = OrderSerializer(order_list, many=True)
+        return Response({'orders': serializer.data})
+
+    elif request.method == 'POST':
+        serializer = OrderSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def order_api_detail(request, pk, format=None):
+    order_obj = get_object_or_404(Order, pk=pk)
+    if order_obj:
+        if request.method == 'GET':
+            serializer = OrderSerializer(order_obj)
+            return Response(serializer.data)
+        elif request.method == 'PUT':
+            serializer = OrderSerializer(order_obj, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'massage': 'Данные успешно обновлены', 'order': serializer.data})
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        elif request.method == 'DELETE':
+            order_obj.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+    else:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+class ProductViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
