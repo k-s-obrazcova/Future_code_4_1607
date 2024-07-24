@@ -5,11 +5,11 @@ from .forms import ProductFilterForm, SupplierForm
 from .models import *
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 
-from .serializer import OrderSerializer, ProductSerializer
+from .serializer import *
 from .utils import CalculateMoney
 
 from django.http import JsonResponse
-from rest_framework import status
+from rest_framework import status, mixins
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import viewsets
@@ -161,3 +161,62 @@ def order_api_detail(request, pk, format=None):
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+
+
+class ProductViewSetSimple(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+
+    def get_serializer_class(self):
+        if self.action in ['create', 'update', 'partial_update']:
+            return ProductSerializer
+        return ProductSerializerSimple
+
+
+class SupplierListViewSet(mixins.ListModelMixin,  # Список со всеми объектами
+                          mixins.RetrieveModelMixin,  # Просмотр отдельного объекта
+                          # mixins.CreateModelMixin,  # Создание объекта
+                          # mixins.UpdateModelMixin,  # Обновление данных объекта
+                          # mixins.DestroyModelMixin,  # Удаление объекта
+                          viewsets.GenericViewSet):
+    queryset = Supplier.objects.all()
+    serializer_class = SupplierSerializer
+
+
+class SupplierViewSet(viewsets.ModelViewSet):
+    queryset = Supplier.objects.all()
+    serializer_class = SupplierSerializer
+
+
+class SupplyViewSet(viewsets.ModelViewSet):
+    queryset = Supply.objects.all()
+    serializer_class = SupplySerializer
+
+
+class ParametrViewSet(viewsets.ModelViewSet):
+    queryset = Parametr.objects.all()
+    serializer_class = ParametrSerializer
+
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+
+class TagViewSet(viewsets.ModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+
+
+class WarehouseViewSet(viewsets.ModelViewSet):
+    queryset = Warehouse.objects.all()
+    serializer_class = WarehouseSerializer
+
+
+class InventoryViewSet(viewsets.ModelViewSet):
+    queryset = Inventory.objects.all()
+    serializer_class = InventorySerializer
+
+
+class ReviewViewSet(viewsets.ModelViewSet):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer

@@ -24,4 +24,7 @@ urlpatterns = [
 
 router = routers.SimpleRouter()
 router.register('api/products', ProductViewSet, basename='product')
+router.register('api/supplier', SupplierViewSet, basename='supplier')
+router.register('api/supplier_simple', ProductViewSetSimple, basename='supplier_simple')
+router.register('api/list_supplier', SupplierListViewSet, basename='list_supplier')
 urlpatterns += router.urls
