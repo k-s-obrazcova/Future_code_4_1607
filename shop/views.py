@@ -1,4 +1,6 @@
 from django.shortcuts import render, get_object_or_404
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.renderers import AdminRenderer
 
 from basket.forms import BasketAddProductForm
 from .forms import ProductFilterForm, SupplierForm
@@ -9,7 +11,7 @@ from .serializer import *
 from .utils import CalculateMoney
 
 from django.http import JsonResponse
-from rest_framework import status, mixins
+from rest_framework import status, mixins, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import viewsets
@@ -172,6 +174,22 @@ class ProductViewSetSimple(viewsets.ModelViewSet):
         return ProductSerializerSimple
 
 
+class PaginationPage(PageNumberPagination):
+    page_size_query_param = 'page_size'
+    page_size = 2
+
+
+class CustomPermissions(permissions.DjangoModelPermissions):
+    perms_map = {
+        'GET': ['%(app_label)s.view_%(model_name)s'],
+        'OPTIONS': ['%(app_label)s.view_%(model_name)s'],
+        'HEAD': ['%(app_label)s.view_%(model_name)s'],
+        'POST': ['%(app_label)s.add_%(model_name)s'],
+        'PUT': ['%(app_label)s.change_%(model_name)s'],
+        'PATCH': ['%(app_label)s.change_%(model_name)s'],
+        'DELETE': ['%(app_label)s.delete_%(model_name)s']
+    }
+
 class SupplierListViewSet(mixins.ListModelMixin,  # Список со всеми объектами
                           mixins.RetrieveModelMixin,  # Просмотр отдельного объекта
                           # mixins.CreateModelMixin,  # Создание объекта
@@ -182,9 +200,11 @@ class SupplierListViewSet(mixins.ListModelMixin,  # Список со всеми
     serializer_class = SupplierSerializer
 
 
+
 class SupplierViewSet(viewsets.ModelViewSet):
     queryset = Supplier.objects.all()
     serializer_class = SupplierSerializer
+    permission_classes = [CustomPermissions]
 
 
 class SupplyViewSet(viewsets.ModelViewSet):
@@ -220,3 +240,18 @@ class InventoryViewSet(viewsets.ModelViewSet):
 class ReviewViewSet(viewsets.ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
+
+
+class ProductPaginationViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    pagination_class = PaginationPage
+
+
+class SupplierAdminViewSet(viewsets.ModelViewSet):
+    queryset = Supplier.objects.all()
+    renderer_classes = [AdminRenderer]
+    serializer_class = SupplierSerializer
+
+# library.add_books
+
