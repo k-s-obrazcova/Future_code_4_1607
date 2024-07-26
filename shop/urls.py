@@ -20,6 +20,8 @@ urlpatterns = [
     path('api/orders/', order_api_list, name='api_order_list'),
     path('api/orders/<int:pk>/', order_api_detail, name='api_order_detail'),
 
+    path('page_product_apiview/', ProductListView.as_view(), name='page_product_apiview')
+
 ]
 
 router = routers.SimpleRouter()
@@ -36,4 +38,5 @@ router.register('api/inventory', InventoryViewSet, basename='inventory')
 router.register('api/review', ReviewViewSet, basename='review')
 router.register('api/product_pagination', ProductPaginationViewSet, basename='product_pagination')
 router.register('api/supplier_admin', SupplierAdminViewSet, basename='supplier_admin')
+router.register('api/product_search', ProductSearchViewSet, basename='product_search')
 urlpatterns += router.urls

@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.renderers import AdminRenderer
+from rest_framework.renderers import AdminRenderer, TemplateHTMLRenderer
+from rest_framework.views import APIView
 
 from basket.forms import BasketAddProductForm
 from .forms import ProductFilterForm, SupplierForm
@@ -190,6 +191,7 @@ class CustomPermissions(permissions.DjangoModelPermissions):
         'DELETE': ['%(app_label)s.delete_%(model_name)s']
     }
 
+
 class SupplierListViewSet(mixins.ListModelMixin,  # Список со всеми объектами
                           mixins.RetrieveModelMixin,  # Просмотр отдельного объекта
                           # mixins.CreateModelMixin,  # Создание объекта
@@ -198,7 +200,6 @@ class SupplierListViewSet(mixins.ListModelMixin,  # Список со всеми
                           viewsets.GenericViewSet):
     queryset = Supplier.objects.all()
     serializer_class = SupplierSerializer
-
 
 
 class SupplierViewSet(viewsets.ModelViewSet):
@@ -253,5 +254,24 @@ class SupplierAdminViewSet(viewsets.ModelViewSet):
     renderer_classes = [AdminRenderer]
     serializer_class = SupplierSerializer
 
+
 # library.add_books
 
+class ProductSearchViewSet(viewsets.ModelViewSet):
+    serializer_class = ProductSerializer
+
+    def get_queryset(self):
+        queryset = Product.objects.all()
+        name = self.request.query_params.get('name', None)
+        if name is not None:
+            queryset = queryset.filter(name__icontains=name)
+        return queryset
+
+
+class ProductListView(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'shop/product/test_apiview_product.html'
+
+    def get(self, request):
+        queryset = Product.objects.all()
+        return Response({'products': queryset})
