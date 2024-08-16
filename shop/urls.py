@@ -20,7 +20,10 @@ urlpatterns = [
     path('api/orders/', order_api_list, name='api_order_list'),
     path('api/orders/<int:pk>/', order_api_detail, name='api_order_detail'),
 
-    path('page_product_apiview/', ProductListView.as_view(), name='page_product_apiview')
+    path('page_product_apiview/', ProductListView.as_view(), name='page_product_apiview'),
+
+    path('filters/', template_filter_django, name='template_filter_django'),
+    path('tags/', template_tag_django, name='template_tag_django'),
 
 ]
 

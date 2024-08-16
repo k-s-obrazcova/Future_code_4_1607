@@ -296,3 +296,17 @@ def template_filter_django(request):
         ]
     }
     return render(request, 'shop/test_filter_tags/filters.html', context=context)
+
+
+def template_tag_django(request):
+    context = {
+        'html_code': '<b>Жирный шрифт</b>',
+        'some_list': ['text1', 'text2', 'text3', 'text4', 'text5', 'text6'],
+        'var1': None,
+        'var2': 'False',
+        'var3': 0,
+        'var4': '',
+        'var5': 'Вывод',
+        'obj': Product.objects.get(pk=1),
+    }
+    return render(request, 'shop/test_filter_tags/tags.html', context=context)
