@@ -301,9 +301,9 @@ def template_filter_django(request):
 def template_tag_django(request):
     context = {
         'html_code': '<b>Жирный шрифт</b>',
-        'some_list': ['text1', 'text2', 'text3', 'text4', 'text5', 'text6'],
+        'some_list': ['text1', 'text1', 'text3', 'text4', 'text5', 'text1'],
         'var1': None,
-        'var2': 'False',
+        'var2': False,
         'var3': 0,
         'var4': '',
         'var5': 'Вывод',

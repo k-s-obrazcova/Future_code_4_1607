@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% load custom %}
+
 {% block title_name %}
     Пример фильтров в Django
 {% endblock %}
@@ -41,6 +43,11 @@
         <p><b>Проверка деления с остатком (divisibleby): </b>{{ digit|divisibleby:"9" }}</p>
 
         <p><b>Отображение числа в формате размера файла(filesizeformat): </b>{{ digit|add:"1974821"|filesizeformat }}</p>
+
+    <div>
+        {{ "hello world" | underscore }}
+        {{ "hello world" | reverse }}
+    </div>
 
     </div>
 
