@@ -48,7 +48,7 @@ class Shoes(models.Model):
         verbose_name_plural = 'Обуви'
 
 
-class gi(models.Model):
+class Supplier(models.Model):
     name = models.CharField(max_length=MAX_LENGTH, verbose_name='Название поставщика')
     phone = models.CharField(max_length=16, verbose_name='Телефон компании')
     address_company = models.CharField(max_length=MAX_LENGTH, verbose_name='Адрес')
