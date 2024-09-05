@@ -1,0 +1,23 @@
+{% load static %}
+
+<div class="col-md-4 d-flex justify-content-center">
+    <div class="card my-3">
+        {% if photo_need %}
+            {% if object.photo %}
+                <img src="{{ object.photo.url }}" class="card-img-top" alt="...">
+            {% else %}
+                <img src="{% static 'shop/image/no_photo.jpg' %}" class="card-img-top" alt="...">
+            {% endif %}
+        {% endif %}
+        <div class="card-body">
+            <h5 class="card-title">{{ object.name }}</h5>
+            {% if object.price %}
+                <h6 class="card-subtitle text-body-secondary">{{ object.price }} руб.</h6>
+            {% endif %}
+            {% if object.description %}
+                <p class="card-text">{{ object.description }}</p>
+            {% endif %}
+            <a class="btn btn-outline-primary" href="{% url url_name object.pk %}">Подробнее...</a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title_name %}
+    Подробнее о товаре
+{% endblock %}
+
+{% block content %}
+    <div class="p-3">
+        <h1>Подробнее о {{ object.name }}</h1>
+        <table class="table table-bordered my-2">
+            <thead>
+            <tr>
+                <th>Название</th>
+                <th>Описание</th>
+                <th>Цена</th>
+                <th>Категория</th>
+                <th>Коллекция</th>
+                <th>Изображение</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>{{ object.name }}</td>
+                <td>
+                    {% if object.description %}
+                        {{ object.description }}
+                    {% else %}
+                        Описание отсутствует
+                    {% endif %}
+                </td>
+                <td>{{ object.price }} руб.</td>
+                <td>{{ object.category.name }}</td>
+                <td>
+                    <ul>
+                        {% for collect in object.collection.all %}
+                            <li>{{ collect.name }}</li>
+                        {% empty %}
+                            <li>Нет коллекций</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+                <td>
+                    {% if object.photo %}
+                        <img src="{{ object.photo.url }}" class="card-img-top" alt="...">
+                    {% else %}
+                        <img src="{% static 'shop/image/no_photo.jpg' %}" class="card-img-top" alt="...">
+                    {% endif %}
+                </td>
+            </tr>
+            </tbody>
+            <a href="{% url 'shoes_list' %}" class="btn btn-outline-dark my-2">Обратно к каталогу обуви</a>
+        </table>
+    </div>
+{% endblock %}
